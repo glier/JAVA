@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Main {
 
     public static void main(String[] args) {
-	    byte b = 127;
+        byte b = 127;
 	    short sh = 32767;
 	    int in = 2147483647;
 	    long lo = 9223372036854775807L;
@@ -13,6 +13,11 @@ public class Main {
         double du = 23.123;
         char ch = '*';
         boolean bl = true;
+        String s = "String";
+        Integer i = 5;
+        Long l = 5L;
+        Float f = 55.5f;
+        Double d = 6.33;
 
         System.out.println(calc(11.11f, 22.22f, 33.33f, 44.44f));
         System.out.println(isValid(5, 10));
