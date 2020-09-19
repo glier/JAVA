@@ -1,4 +1,4 @@
-package com.geekbrains.lesson6;
+package com.geekbrains.level1.lesson6;
 
 public class Dragon extends Animal {
     public Dragon(String name, int jumpMax, int swimMax, int runMax) {

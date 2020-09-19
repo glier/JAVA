@@ -1,4 +1,4 @@
-package com.geekbrains.lesson5;
+package com.geekbrains.level1.lesson5;
 
 import java.util.Objects;
 

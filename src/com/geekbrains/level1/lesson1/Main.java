@@ -1,4 +1,4 @@
-package com.geekbrains.lesson1;
+package com.geekbrains.level1.lesson1;
 
 import java.time.LocalDate;
 
