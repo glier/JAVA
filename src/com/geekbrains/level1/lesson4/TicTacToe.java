@@ -1,4 +1,4 @@
-package com.geekbrains.lesson8;
+package com.geekbrains.level1.lesson4;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -10,37 +10,21 @@ public class TicTacToe {
     private static final char DOT_X = 'X';
     private static final char DOT_O = 'O';
 
-    private static final int SIZE = 5;
+    private static final int SIZE = 9;
     private static final int DOTS_TO_WIN = 5;
 
     private static final char[][] map = new char[SIZE][SIZE];
-    private static  Form form;
+    private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
-    private static int[] humanTurnedCell = new int[]{-1, -1};
-    private static boolean humanTurned = false;
 
-    public static void main(String[] args) throws InterruptedException {
-        form = new Form(SIZE, SIZE);
+    public static void main(String[] args) {
         prepareGame();
         playGame();
         System.out.println("Игра закончена!");
     }
 
-    private static void playGame() throws InterruptedException {
+    private static void playGame() {
         while (true) {
-
-            aiTurn();
-            printMap();
-            if (checkWin(DOT_O, map)) {
-                System.out.println("Победил Искуственный Интеллект!");
-                break;
-            }
-
-            if (isMapFull()) {
-                System.out.println("Ничья!");
-                break;
-            }
-
             humanTurn();
             printMap();
             if (checkWin(DOT_X, map)) {
@@ -53,6 +37,17 @@ public class TicTacToe {
                 break;
             }
 
+            aiTurn();
+            printMap();
+            if (checkWin(DOT_O, map)) {
+                System.out.println("Победил Искуственный Интеллект!");
+                break;
+            }
+
+            if (isMapFull()) {
+                System.out.println("Ничья!");
+                break;
+            }
         }
     }
 
@@ -148,26 +143,26 @@ public class TicTacToe {
         }
 
         map[rowIndex][colIndex] = DOT_O;
-        form.setCellLabel(String.valueOf(DOT_O), rowIndex, colIndex);
     }
 
-    private static void humanTurn() throws InterruptedException {
+    private static void humanTurn() {
+        int rowIndex = -1, colIndex = -1;
         do {
-            Thread.sleep(100);
-        } while (!isCellValid(humanTurnedCell[0], humanTurnedCell[1]) && !humanTurned);
+            System.out.println("Введите координаты в формате '<номер строки> <номер колонки>'");
+            String[] stringData = scanner.nextLine().split(" ");
+            if (stringData.length != 2) {
+                System.out.println("Были введены некорректные данные!");
+                continue;
+            }
+            try {
+                rowIndex = Integer.parseInt(stringData[0]) - 1;
+                colIndex = Integer.parseInt(stringData[1]) - 1;
+            } catch (NumberFormatException e) {
+                System.out.println("Были введены некорректные данные!");
+            }
+        } while (!isCellValid(rowIndex, colIndex));
 
-        map[humanTurnedCell[0]][humanTurnedCell[1]] = DOT_X;
-        form.setCellLabel(String.valueOf(DOT_X), humanTurnedCell[0], humanTurnedCell[1]);
-        setHumanTurned(false);
-    }
-
-    public static void setHumanTurnedCell(int rowInd, int colInd) {
-        humanTurnedCell[0] = rowInd;
-        humanTurnedCell[1] = colInd;
-    }
-
-    public static void setHumanTurned(boolean isTurned) {
-        humanTurned = isTurned;
+        map[rowIndex][colIndex] = DOT_X;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

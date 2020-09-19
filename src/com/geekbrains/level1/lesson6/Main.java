@@ -1,4 +1,4 @@
-package com.geekbrains.lesson6;
+package com.geekbrains.level1.lesson6;
 
 public class Main {
     public static void main(String[] args) {
