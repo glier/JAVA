@@ -1,9 +1,9 @@
 package server.chat;
 
+import clientserver.Command;
 import server.chat.auth.AuthService;
 import server.chat.auth.BaseAuthService;
 import server.chat.handler.ClientHandler;
-import server.chat.handler.MessageHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,20 +11,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MyServer {
 
     private final ServerSocket serverSocket;
     private final List<ClientHandler> clients = new ArrayList<>();
-//    private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
-//    private final List<ClientHandler> clients = Collections.synchronizedList(new ArrayList<>());
     private final AuthService authService;
-    private final MessageHandler messageHandler;
 
 
     public MyServer(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.authService = new BaseAuthService();
-        this.messageHandler = new MessageHandler();
     }
 
     public void start() throws IOException {
@@ -60,29 +57,34 @@ public class MyServer {
         return authService;
     }
 
-    public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {
+    public synchronized void broadcastMessage(ClientHandler sender, Command command) throws IOException {
         for (ClientHandler client : clients) {
             if (client == sender) {
                 continue;
             }
 
-            if (messageHandler.isPrivat(message)
-                    && messageHandler.getUserNameFromMessage(message).equals(client.getUsername())) {
-                client.sendMessage(message);
-                return;
-            }
-
-            if (!messageHandler.isPrivat(message))
-                client.sendMessage(message);
+            client.sendMessage(command);
         }
     }
 
-    public synchronized void subscribe(ClientHandler handler) {
+    public synchronized void subscribe(ClientHandler handler) throws IOException {
         clients.add(handler);
+        List<String> users = getAllUsers();
+        broadcastMessage(null, Command.updateUsersListCommand(users));
     }
 
-    public synchronized void unsubscribe(ClientHandler handler) {
+    public synchronized void unsubscribe(ClientHandler handler) throws IOException {
         clients.remove(handler);
+        List<String> users = getAllUsers();
+        broadcastMessage(null, Command.updateUsersListCommand(users));
+    }
+
+    private List<String> getAllUsers() {
+        List<String> usernames = new ArrayList<>();
+        for (ClientHandler client: clients) {
+            usernames.add(client.getUsername());
+        }
+        return usernames;
     }
 
     public synchronized boolean isNicknameAlreadyBusy(String username) {
@@ -94,4 +96,11 @@ public class MyServer {
         return false;
     }
 
+    public synchronized void sendPrivateMessage(String recipient, Command command) throws IOException {
+        for (ClientHandler client : clients) {
+            if (client.getUsername().equals(recipient)) {
+                client.sendMessage(command);
+            }
+        }
+    }
 }
