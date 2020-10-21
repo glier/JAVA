@@ -1,5 +1,6 @@
 package client.controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,13 +26,11 @@ public class AuthDialogController {
             return;
         }
 
-        String authError = network.sendAuthCommand(login, password);
-        if (authError == null) {
-            clientApp.openChat();
-        } else {
-            NetworkChatClient.showNetworkError(authError, "Auth error");
-        }
+        network.sendAuthCommand(login, password);
+    }
 
+    public void authOk() {
+        Platform.runLater(() -> clientApp.openChat());
 
     }
 
