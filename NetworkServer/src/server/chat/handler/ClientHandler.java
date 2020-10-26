@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 public class ClientHandler {
 
-    private static final int TIMEOUT = 10 * 1000;
+    private static final int TIMEOUT = 120 * 1000;
     private final MyServer myServer;
     private final Socket clientSocket;
 
