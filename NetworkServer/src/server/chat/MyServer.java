@@ -3,6 +3,7 @@ package server.chat;
 import clientserver.Command;
 import server.chat.auth.AuthService;
 import server.chat.auth.BaseAuthService;
+import server.chat.auth.DBAuthService;
 import server.chat.handler.ClientHandler;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class MyServer {
 
     public MyServer(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
-        this.authService = new BaseAuthService();
+        this.authService = new DBAuthService();
     }
 
     public void start() throws IOException {
