@@ -1,5 +1,7 @@
 package client.controllers;
 
+import client.models.Message;
+import client.models.MessageHistory;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -24,6 +26,7 @@ public class ViewController {
     @FXML
     private TextField textField;
     private Network network;
+    private MessageHistory messageHistory;
 
     private String selectedRecipient;
 
@@ -57,7 +60,7 @@ public class ViewController {
 
     private void sendMessage() {
         String message = textField.getText();
-        appendMessage("Я: " + message);
+        appendMessage(new Message(null, "Я: " + message), false);
         textField.clear();
 
         try {
@@ -78,13 +81,23 @@ public class ViewController {
         this.network = network;
     }
 
-    public void appendMessage(String message) {
-        String timestamp = DateFormat.getInstance().format(new Date());
-        chatHistory.appendText(timestamp);
+    public void setMessageHistory(MessageHistory messageHistory) {
+        this.messageHistory = messageHistory;
+        messageHistory.getMessages().forEach((M) -> appendMessage(M, true));
+    }
+
+    public void appendMessage(Message message, boolean isRecovery) {
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(DateFormat.getInstance().format(new Date()));
+        }
+
+        chatHistory.appendText(message.getTimestamp());
         chatHistory.appendText(System.lineSeparator());
-        chatHistory.appendText(message);
+        chatHistory.appendText(message.getMessage());
         chatHistory.appendText(System.lineSeparator());
         chatHistory.appendText(System.lineSeparator());
+
+        if (!isRecovery) messageHistory.add(message);
     }
 
     public void showError(String title, String message) {

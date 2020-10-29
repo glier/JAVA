@@ -1,6 +1,7 @@
 package client;
 
 
+import client.models.MessageHistory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,19 +13,25 @@ import client.controllers.AuthDialogController;
 import client.controllers.ViewController;
 import client.models.Network;
 
+import java.io.*;
 import java.util.List;
 
 
 public class NetworkChatClient extends Application {
 
     public static final List<String> USERS_TEST_DATA = List.of("Oleg", "Alexey", "Peter");
+    private static final String MSG_HIST_TEMPLATE = "_msg_hist.txt";
 
     private Stage primaryStage;
     private Stage authDialogStage;
     private Network network;
     private ViewController viewController;
     private AuthDialogController authController;
+    private MessageHistory messageHistory;
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -83,13 +90,43 @@ public class NetworkChatClient extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     public void openChat() {
         authDialogStage.close();
         primaryStage.show();
         primaryStage.setTitle(network.getUsername());
+        messageHistory = readMessageHistoryFromFile(getFilePath("", network.getUsername()));
+        viewController.setMessageHistory(messageHistory);
+    }
+
+    @Override
+    public void stop() {
+        writeMessageHistoryToFile(messageHistory, getFilePath("", network.getUsername()));
+    }
+
+    private MessageHistory readMessageHistoryFromFile(String filePath) {
+        try (FileInputStream fis = new FileInputStream(filePath);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            return (MessageHistory) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.err.println("History file not exists. Will be created new file.");
+            return new MessageHistory();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new MessageHistory();
+    }
+
+    private void writeMessageHistoryToFile(MessageHistory messageHistory, String filePath) {
+        try (FileOutputStream fos = new FileOutputStream(filePath);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(messageHistory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getFilePath(String filePath, String filePrefix) {
+        return filePath + filePrefix + MSG_HIST_TEMPLATE;
     }
 }

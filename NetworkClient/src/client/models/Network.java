@@ -84,7 +84,7 @@ public class Network {
                             String message = data.getMessage();
                             String sender = data.getSender();
                             String formattedMessage = sender != null ? String.format("%s: %s", sender, message) : message;
-                            Platform.runLater(() -> viewController.appendMessage(formattedMessage));
+                            Platform.runLater(() -> viewController.appendMessage(new Message(null, formattedMessage), false));
                         }
                         case ERROR -> {
                             ErrorCommandData data = (ErrorCommandData) command.getData();
