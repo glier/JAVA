@@ -11,6 +11,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler {
 
@@ -32,7 +35,8 @@ public class ClientHandler {
         in  = new ObjectInputStream(clientSocket.getInputStream());
         out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        new Thread(() -> {
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.submit(() -> {
             try {
                 authentication();
                 readMessages();
@@ -45,7 +49,23 @@ public class ClientHandler {
                     System.err.println("Failed to close connection!");
                 }
             }
-        }).start();
+        });
+        executorService.shutdown();
+
+//        new Thread(() -> {
+//            try {
+//                authentication();
+//                readMessages();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                try {
+//                    closeConnection();
+//                } catch (IOException e) {
+//                    System.err.println("Failed to close connection!");
+//                }
+//            }
+//        }).start();
     }
 
     public String getUsername() {
