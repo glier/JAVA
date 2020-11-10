@@ -1,11 +1,15 @@
 package server.chat.auth;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.chat.services.UserServices;
 
 public class DBAuthService implements AuthService {
+    private static final Logger LOGGER = LogManager.getLogger(DBAuthService.class);
+
     @Override
     public void start() {
-        System.out.println("Auth service has been started");
+        LOGGER.info("Auth service has been started");
     }
 
     @Override
@@ -15,6 +19,6 @@ public class DBAuthService implements AuthService {
 
     @Override
     public void stop() {
-        System.out.println("Auth service has been finished");
+        LOGGER.info("Auth service has been finished");
     }
 }

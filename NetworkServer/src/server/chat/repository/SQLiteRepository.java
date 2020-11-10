@@ -1,8 +1,12 @@
 package server.chat.repository;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 
 public class SQLiteRepository implements JDBCRepository {
+    private static final Logger LOGGER = LogManager.getLogger(SQLiteRepository.class);
     private static final String CONN_URL = "jdbc:sqlite:chat.db";
     private static final String CLASS_NAME = "org.sqlite.JDBC";
     private Connection connection;
@@ -41,7 +45,7 @@ public class SQLiteRepository implements JDBCRepository {
             connection = DriverManager.getConnection(CONN_URL);
             statement = connection.createStatement();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("SQLite driver not found",e);
         }
     }
 
@@ -53,7 +57,7 @@ public class SQLiteRepository implements JDBCRepository {
             if (connection!= null && !connection.isClosed())
                 connection.close();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            LOGGER.error("SQLException", throwables);
         }
     }
 
@@ -81,7 +85,7 @@ public class SQLiteRepository implements JDBCRepository {
                 }
                 resultSet.close();
             } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                LOGGER.error("SQLException", throwables);
             }
         }
     }

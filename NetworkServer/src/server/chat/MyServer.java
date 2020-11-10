@@ -1,6 +1,9 @@
 package server.chat;
 
 import clientserver.Command;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.chat.auth.AuthService;
 import server.chat.auth.BaseAuthService;
 import server.chat.auth.DBAuthService;
@@ -15,6 +18,7 @@ import java.util.List;
 
 public class MyServer {
 
+    private static final Logger LOGGER = LogManager.getLogger(MyServer.class);
     private final ServerSocket serverSocket;
     private final List<ClientHandler> clients = new ArrayList<>();
     private final AuthService authService;
@@ -26,7 +30,7 @@ public class MyServer {
     }
 
     public void start() throws IOException {
-        System.out.println("Сервер был запущен");
+        LOGGER.info("Сервер был запущен");
 
         authService.start();
         try {
@@ -34,8 +38,7 @@ public class MyServer {
                 waitAndProcessNewClientConnection();
             }
         } catch (IOException e) {
-            System.err.println("Failed to accept new connection");
-            e.printStackTrace();
+            LOGGER.error("Failed to accept new connection", e);
         } finally {
             authService.stop();
             serverSocket.close();
@@ -43,9 +46,9 @@ public class MyServer {
     }
 
     private void waitAndProcessNewClientConnection() throws IOException {
-        System.out.println("Ожидание нового подключения....");
+        LOGGER.info("Ожидание нового подключения....");
         Socket clientSocket = serverSocket.accept();
-        System.out.println("Клиент подключился");// /auth login password
+        LOGGER.info("Клиент подключился");// /auth login password
         processClientConnection(clientSocket);
     }
 

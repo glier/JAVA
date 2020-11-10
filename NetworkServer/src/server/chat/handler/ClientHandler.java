@@ -5,6 +5,8 @@ import clientserver.CommandType;
 import clientserver.commands.AuthCommandData;
 import clientserver.commands.PrivateMessageCommandData;
 import clientserver.commands.PublicMessageCommandData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.chat.MyServer;
 
 import java.io.*;
@@ -16,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ClientHandler {
-
+    private static final Logger LOGGER = LogManager.getLogger(ClientHandler.class);
     private static final int TIMEOUT = 120 * 1000;
     private final MyServer myServer;
     private final Socket clientSocket;
@@ -46,26 +48,11 @@ public class ClientHandler {
                 try {
                     closeConnection();
                 } catch (IOException e) {
-                    System.err.println("Failed to close connection!");
+                    LOGGER.error("Failed to close connection!");
                 }
             }
         });
         executorService.shutdown();
-
-//        new Thread(() -> {
-//            try {
-//                authentication();
-//                readMessages();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    closeConnection();
-//                } catch (IOException e) {
-//                    System.err.println("Failed to close connection!");
-//                }
-//            }
-//        }).start();
     }
 
     public String getUsername() {
@@ -97,7 +84,7 @@ public class ClientHandler {
                     break;
                 }
                 default:
-                    System.err.println("Unknown type of command: " + command.getType());
+                    LOGGER.warn("Unknown type of command: " + command.getType());
             }
 
         }
@@ -108,8 +95,7 @@ public class ClientHandler {
             return (Command) in.readObject();
         } catch (ClassNotFoundException e) {
             String errorMessage = "Unknown type of object from client";
-            System.err.println(errorMessage);
-            e.printStackTrace();
+            LOGGER.error(errorMessage, e);
             sendMessage(Command.errorCommand(errorMessage));
             return null;
         }
@@ -123,7 +109,7 @@ public class ClientHandler {
                 try {
                     synchronized (this) {
                         if (username == null) {
-                            System.out.println("authentication is terminated caused by timeout expired");
+                            LOGGER.warn("authentication is terminated caused by timeout expired");
                             sendMessage(Command.authTimeoutCommand("Истекло время ожидания подключения!"));
                             Thread.sleep(100);
                             clientSocket.close();
@@ -158,7 +144,9 @@ public class ClientHandler {
         this.username = myServer.getAuthService().getUsernameByLoginAndPassword(login, password);
         if (username != null) {
             if (myServer.isNicknameAlreadyBusy(username)) {
-                sendMessage(Command.authErrorCommand("Login and password are already used!"));
+                String message = "Login and password are already used!";
+                LOGGER.warn(message);
+                sendMessage(Command.authErrorCommand(message));
                 return false;
             }
             sendMessage(Command.authOkCommand(username));
@@ -166,7 +154,9 @@ public class ClientHandler {
             myServer.subscribe(this);
             return true;
         } else {
-            sendMessage(Command.authErrorCommand("Login and/or password are invalid! Please, try again"));
+            String message = "Login and/or password are invalid! Please, try again";
+            LOGGER.warn(message);
+            sendMessage(Command.authErrorCommand(message));
             return false;
         }
     }

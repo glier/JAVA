@@ -79,37 +79,50 @@ public class Network {
                     }
 
                     switch (command.getType()) {
-                        case INFO_MESSAGE -> {
+                        case INFO_MESSAGE: {
                             MessageInfoCommandData data = (MessageInfoCommandData) command.getData();
                             String message = data.getMessage();
                             String sender = data.getSender();
                             String formattedMessage = sender != null ? String.format("%s: %s", sender, message) : message;
                             Platform.runLater(() -> viewController.appendMessage(new Message(null, formattedMessage), false));
+                            break;
                         }
-                        case ERROR -> {
+                        case ERROR: {
                             ErrorCommandData data = (ErrorCommandData) command.getData();
                             String errorMessage = data.getErrorMessage();
                             Platform.runLater(() -> viewController.showError("Server error", errorMessage));
+                            break;
                         }
-                        case UPDATE_USERS_LIST -> {
+                        case UPDATE_USERS_LIST: {
                             UpdateUsersListCommandData data = (UpdateUsersListCommandData) command.getData();
                             Platform.runLater(() -> viewController.updateUsers(data.getUsers()));
+                            break;
                         }
-                        case AUTH_TIMEOUT -> {
+                        case AUTH_TIMEOUT: {
                             AuthTimeoutCommandData data = (AuthTimeoutCommandData) command.getData();
                             Platform.runLater(() -> NetworkChatClient.showNetworkError("Timeout connection", data.getTimeoutMessage()));
+                            break;
                         }
-                        case AUTH_OK -> {
+                        case AUTH:
+                            break;
+                        case AUTH_OK: {
                             AuthOkCommandData data = (AuthOkCommandData) command.getData();
                             username = data.getUsername();
                             authController.authOk();
+                            break;
                         }
-                        case AUTH_ERROR -> {
+                        case AUTH_ERROR: {
                             AuthErrorCommandData data = (AuthErrorCommandData) command.getData();
-
                             Platform.runLater(() -> viewController.showError("Auth error", data.getErrorMessage()));
+                            break;
                         }
-                        default -> Platform.runLater(() -> viewController.showError("Unknown command from server!", command.getType().toString()));
+                        case PRIVATE_MESSAGE:
+                            break;
+                        case PUBLIC_MESSAGE:
+                            break;
+                        case END:
+                            break;
+                        default: Platform.runLater(() -> viewController.showError("Unknown command from server!", command.getType().toString()));
                     }
                 }
             } catch (IOException e) {
