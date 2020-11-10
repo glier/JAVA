@@ -1,0 +1,14 @@
+2020-11-09 23:02:49.536 [main] INFO  server.ServerApp - We've just greeted the user!
+2020-11-09 23:02:49.645 [main] WARN  server.ServerApp - We've just greeted the user!
+2020-11-09 23:02:49.645 [main] ERROR server.ServerApp - We've just greeted the user!
+2020-11-09 23:02:49.646 [main] FATAL server.ServerApp - We've just greeted the user!
+2020-11-09 23:02:49.648 [main] INFO  server.chat.MyServer - Сервер был запущен
+2020-11-09 23:02:49.649 [main] INFO  server.chat.auth.DBAuthService - Auth service has been started
+2020-11-09 23:02:49.649 [main] INFO  server.chat.MyServer - Ожидание нового подключения....
+2020-11-09 23:04:12.953 [main] INFO  server.ServerApp - We've just greeted the user!
+2020-11-09 23:04:13.071 [main] WARN  server.ServerApp - We've just greeted the user!
+2020-11-09 23:04:13.071 [main] ERROR server.ServerApp - We've just greeted the user!
+2020-11-09 23:04:13.072 [main] FATAL server.ServerApp - We've just greeted the user!
+2020-11-09 23:04:13.075 [main] INFO  server.chat.MyServer - Сервер был запущен
+2020-11-09 23:04:13.076 [main] INFO  server.chat.auth.DBAuthService - Auth service has been started
+2020-11-09 23:04:13.076 [main] INFO  server.chat.MyServer - Ожидание нового подключения....

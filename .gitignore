@@ -2,3 +2,6 @@
 /out
 /.idea
 /NetworkServer/target
+/NetworkClient/target
+/NetworkClientServer/target
+/target
